@@ -1,0 +1,40 @@
+<!-- public/index.html -->
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO Chat</title>
+    <link href="output.css" rel="stylesheet">
+  </head>
+  <body class="flex flex-col h-screen font-sans">
+    <ul id="messages" class="flex-grow overflow-y-scroll p-4"></ul>
+    <form id="form" action="" class="flex p-4 bg-gray-200 border-t border-gray-300">
+      <input id="input" autocomplete="off" placeholder="Type a message..." class="flex-grow p-2 border border-gray-400 rounded mr-2" />
+      <button class="px-4 py-2 bg-blue-500 text-white rounded">Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const socket = io();
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const messages = document.getElementById('messages');
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+          }
+        });
+
+        socket.on('chat message', function (msg) {
+          const item = document.createElement('li');
+          item.textContent = msg;
+          item.classList.add('p-2', 'mb-2', 'bg-gray-100', 'rounded');
+          messages.appendChild(item);
+          window.scrollTo(0, document.body.scrollHeight);
+        });
+      });
+    </script>
+  </body>
+</html>
